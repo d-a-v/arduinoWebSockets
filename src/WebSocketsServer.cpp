@@ -38,6 +38,8 @@ WebSocketsServerCore::WebSocketsServerCore(const String & origin, const String &
     _httpHeaderValidationFunc = NULL;
     _mandatoryHttpHeaders     = NULL;
     _mandatoryHttpHeaderCount = 0;
+
+    clientsDestruct();
 }
 
 WebSocketsServer::WebSocketsServer(uint16_t port, const String & origin, const String & protocol)
@@ -72,7 +74,7 @@ WebSocketsServer::~WebSocketsServer() {
  */
 void WebSocketsServerCore::begin(void) {
 
-    // call again member destructor + constructors to reinitialize everything
+    // call _clients[]'s member constructor
     for (int i = 0; i < WEBSOCKETS_SERVER_CLIENT_MAX; i++) {
         _clients[i].~WSclient_t();
         new (&_clients[i]) WSclient_t(i, _pingInterval, _pongTimeout, _disconnectTimeoutCount);
@@ -94,6 +96,14 @@ void WebSocketsServerCore::begin(void) {
 void WebSocketsServerCore::close(void) {
     _runnning = false;
     disconnect();
+    clientsDestruct();
+}
+
+void WebSocketsServerCore::clientsDestruct() {
+    // call _clients[]'s member destructor
+    for (int i = 0; i < WEBSOCKETS_SERVER_CLIENT_MAX; i++) {
+        new (&_clients[i]) WSclient_t(i, _pingInterval, _pongTimeout, _disconnectTimeoutCount);
+    }
 }
 
 /**
