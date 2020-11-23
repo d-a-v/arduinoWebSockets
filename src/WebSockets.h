@@ -258,17 +258,17 @@ typedef struct {
     uint8_t * maskKey;
 } WSMessageHeader_t;
 
-typedef struct {
+struct WSclient_t {
 
-    void init (uint8_t  num,
-               uint32_t pingInterval,
-               uint32_t pongTimeout,
-               uint8_t  disconnectTimeoutCount)
+    WSclient_t (uint8_t  num = 0,
+                uint32_t pingInterval = 0,
+                uint32_t pongTimeout = 0,
+                uint8_t  disconnectTimeoutCount = 0):
+        num(num),
+        pingInterval(pingInterval),
+        pongTimeout(pongTimeout),
+        disconnectTimeoutCount(disconnectTimeoutCount)
     {
-        this->num = num;
-        this->pingInterval = pingInterval;
-        this->pongTimeout = pongTimeout;
-        this->disconnectTimeoutCount = disconnectTimeoutCount;
     }
 
     uint8_t num = 0;    ///< connection number
@@ -321,7 +321,7 @@ typedef struct {
     String cHttpLine;    ///< HTTP header lines
 #endif
 
-} WSclient_t;
+};
 
 class WebSockets {
   protected:
